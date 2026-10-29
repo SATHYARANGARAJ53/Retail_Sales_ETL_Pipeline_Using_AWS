@@ -129,8 +129,3 @@ Amazon QuickSight provides two dashboards:
 - Data Warehousing
 - SQL and Amazon Redshift
 - Data Visualization
-- Git and GitHub
-
-
-- GitHub: Add your GitHub profile link here.
-```
