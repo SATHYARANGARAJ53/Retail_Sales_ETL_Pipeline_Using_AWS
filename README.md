@@ -5,15 +5,17 @@
 
 This project demonstrates an end-to-end ETL (Extract, Transform, Load) pipeline built using AWS services.
 
-AWS Lambda fetches product data from the DummyJSON API and stores the raw JSON data in Amazon S3. AWS Glue processes the data and stores the processed files in Parquet format. AWS Step Functions orchestrates the workflow, while Amazon EventBridge Scheduler triggers the workflow on a schedule.
+The pipeline uses data from two sources: the DummyJSON API and a flat file. AWS Lambda fetches product data from the DummyJSON API and stores the raw JSON data in Amazon S3. The flat file provides an additional data source for the pipeline.
 
-The processed data is available in Amazon Redshift, where the `public.sales` and `public.products` tables contain data. Amazon QuickSight is used to create Sales and Product dashboards for data visualization.
+AWS Glue processes and transforms the data, and the processed files are stored in Parquet format in Amazon S3. AWS Step Functions orchestrates the workflow, while Amazon EventBridge Scheduler is configured to trigger the workflow on a schedule.
+
+Amazon Redshift stores the data in the `public.sales` and `public.products` tables. Amazon QuickSight is used to create Sales and Product dashboards for data visualization.
 
 ## 🎯 Project Goal
 
-The goal of this project is to build a cloud-based data pipeline that demonstrates how to:
+The goal of this project is to build a cloud-based ETL pipeline that demonstrates how to:
 
-- Extract data from an external API.
+- Ingest data from an external API and a flat file.
 - Store raw and processed data in Amazon S3.
 - Transform data using AWS Glue.
 - Orchestrate workflows using AWS Step Functions.
@@ -27,43 +29,53 @@ The goal of this project is to build a cloud-based data pipeline that demonstrat
 flowchart TD
     A["DummyJSON API"] --> B["AWS Lambda"]
     B --> C["Amazon S3 - Raw JSON"]
-    C --> D["AWS Glue ETL Job"]
-    D --> E["Amazon S3 - Processed Parquet"]
-    D --> F["Amazon Redshift"]
-    F --> G["public.sales"]
-    F --> H["public.products"]
-    G --> I["QuickSight Sales Dashboard"]
-    H --> J["QuickSight Product Dashboard"]
 
-    K["Amazon EventBridge Scheduler"] --> L["AWS Step Functions"]
-    L --> B
-    L --> D
+    D["Flat File"] --> E["Amazon S3 - Flat File Data"]
+
+    C --> F["AWS Glue ETL Job"]
+    E --> F
+
+    F --> G["Amazon S3 - Processed Parquet"]
+    F --> H["Amazon Redshift"]
+
+    H --> I["public.sales"]
+    H --> J["public.products"]
+
+    I --> K["QuickSight Sales Dashboard"]
+    J --> L["QuickSight Product Dashboard"]
+
+    M["Amazon EventBridge Scheduler"] --> N["AWS Step Functions"]
+    N --> B
+    N --> F
 ```
 
 ## 🔄 Workflow
 
-### 1. Data Extraction
-AWS Lambda calls the DummyJSON API to fetch product data.
+### 1. Data Sources
+The pipeline uses the DummyJSON API and a flat file as data sources.
 
-### 2. Raw Data Storage
-The retrieved JSON data is stored in an Amazon S3 bucket.
+### 2. Data Extraction
+AWS Lambda fetches product data from the DummyJSON API.
 
-### 3. Data Transformation
-AWS Glue runs the ETL job to process and transform the data.
+### 3. Raw Data Storage
+The API response is stored as raw JSON in Amazon S3. The flat file is used as an additional source of data.
 
-### 4. Processed Data Storage
-The processed data is stored in Amazon S3 in Parquet format.
+### 4. Data Transformation
+AWS Glue processes and transforms the input data as part of the ETL workflow.
 
-### 5. Workflow Orchestration
-AWS Step Functions coordinates the pipeline execution. The workflow execution has been tested successfully and shows `Succeeded`.
+### 5. Processed Data Storage
+Processed data is stored in Amazon S3 in Parquet format.
 
-### 6. Scheduled Execution
+### 6. Workflow Orchestration
+AWS Step Functions coordinates the workflow execution.
+
+### 7. Scheduled Execution
 Amazon EventBridge Scheduler is configured to trigger the Step Functions state machine on a schedule.
 
-### 7. Data Warehouse
-Amazon Redshift stores the data in the `public.sales` and `public.products` tables.
+### 8. Data Warehouse
+Amazon Redshift contains the `public.sales` and `public.products` tables.
 
-### 8. Data Visualization
+### 9. Data Visualization
 Amazon QuickSight provides two dashboards:
 - Sales Dashboard
 - Product Dashboard
@@ -72,37 +84,35 @@ Amazon QuickSight provides two dashboards:
 
 | Technology | Purpose |
 |---|---|
-| DummyJSON API | Source of product data |
 | AWS Lambda | Fetches API data |
-| Amazon S3 | Stores raw JSON and processed Parquet files |
+| Amazon S3 | Stores raw and processed data |
 | AWS Glue | Performs ETL processing |
 | AWS Step Functions | Orchestrates workflow execution |
 | Amazon EventBridge Scheduler | Schedules workflow execution |
 | Amazon Redshift | Stores analytical data |
-| Amazon QuickSight | Creates interactive dashboards |
-| GitHub | Stores and documents the project |
+| Amazon QuickSight | Creates dashboards |
 
 ## ✨ Key Features
 
-- Automated API data ingestion using AWS Lambda.
-- Raw data storage in JSON format.
-- Processed data storage in Parquet format.
+- Data ingestion from an external API and a flat file.
+- Raw data storage in Amazon S3.
 - ETL processing using AWS Glue.
+- Processed data storage in Parquet format.
 - Workflow orchestration using AWS Step Functions.
 - Scheduled execution using Amazon EventBridge Scheduler.
 - Analytical tables in Amazon Redshift.
 - Sales and Product dashboards in Amazon QuickSight.
-- Integration of multiple AWS services into a data engineering pipeline.
+- Integration of AWS services into a data engineering pipeline.
 
 ## 📚 What I Learned
 
 - Integrating external APIs with AWS Lambda.
-- Working with Amazon S3 for data storage.
-- Understanding raw and processed data formats.
+- Working with flat-file data sources.
+- Using Amazon S3 for raw and processed data storage.
 - Creating and running ETL jobs with AWS Glue.
-- Orchestrating AWS workflows using Step Functions.
+- Orchestrating workflows using AWS Step Functions.
 - Scheduling automated workflows using EventBridge Scheduler.
-- Working with tables in Amazon Redshift.
+- Working with Amazon Redshift tables.
 - Creating dashboards using Amazon QuickSight.
 - Understanding how cloud services work together in an ETL pipeline.
 
@@ -110,36 +120,17 @@ Amazon QuickSight provides two dashboards:
 
 - AWS Cloud Services
 - Python and API Integration
-- Data Ingestion
+- Flat-File Data Ingestion
+- Data Engineering
 - ETL Pipeline Development
 - Data Transformation
 - Amazon S3 Data Storage
-- Workflow Orchestration
-- Workflow Scheduling
+- Workflow Orchestration and Scheduling
 - Data Warehousing
-- SQL and Redshift Tables
+- SQL and Amazon Redshift
 - Data Visualization
-- Cloud Troubleshooting
-- Technical Documentation
 - Git and GitHub
 
-## ✅ Project Status
 
-- [x] Lambda fetches product data from DummyJSON.
-- [x] Raw JSON data is stored in Amazon S3.
-- [x] AWS Glue ETL job runs successfully.
-- [x] Processed Parquet files are stored in Amazon S3.
-- [x] Amazon Redshift tables are created and contain data.
-- [x] Step Functions execution shows `Succeeded`.
-- [x] EventBridge Scheduler is configured.
-- [x] Sales Dashboard is created in QuickSight.
-- [x] Product Dashboard is created in QuickSight.
-
-## 🔐 Security Notes
-
-- Never upload AWS access keys or secret access keys to GitHub.
-- Do not commit passwords, database credentials, or private configuration files.
-- Review screenshots before publishing them.
-- Do not upload sensitive data or unnecessary raw data exports.
-- Use environment variables or AWS IAM roles to manage credentials securely.
-itHub profile link here.
+- GitHub: Add your GitHub profile link here.
+```
